@@ -685,7 +685,7 @@ constexpr void* (*getOpsImpl(std::false_type) noexcept)(Op, Data*, void*) {
   return &execOnHeap<I, T>;
 }
 
-template <class I, class T, std::enable_if_t<!inSitu<T>(), int> = 0>
+template <class I, class T>
 constexpr void* (*getOps() noexcept)(Op, Data*, void*) {
   return getOpsImpl<I, T>(std::bool_constant<inSitu<T>()>{});
 }
