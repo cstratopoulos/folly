@@ -713,6 +713,8 @@ struct VTable<I, PolyMembers<Arch...>, TypeList<S...>>
   explicit constexpr VTable(Type<T>) noexcept
       : VTable{Type<T>{}, MembersOf<I, T>{}} {}
 
+  std::tuple<SignatureOf<Arch, I>...> const& asTuple() const noexcept { return *this; }
+
   State state_;
   void* (*ops_)(Op, Data*, void*);
 };
@@ -803,12 +805,12 @@ struct PolyNode : Tail {
 
   template <std::size_t K, typename... As>
   decltype(auto) _polyCall_(As&&... as) {
-    return std::get<K>(select<I>(*PolyAccess::vtable(*this)))(
+    return std::get<K>(select<I>(*PolyAccess::vtable(*this)).asTuple())(
         *PolyAccess::data(*this), static_cast<As&&>(as)...);
   }
   template <std::size_t K, typename... As>
   decltype(auto) _polyCall_(As&&... as) const {
-    return std::get<K>(select<I>(*PolyAccess::vtable(*this)))(
+    return std::get<K>(select<I>(*PolyAccess::vtable(*this)).asTuple())(
         *PolyAccess::data(*this), static_cast<As&&>(as)...);
   }
 };
